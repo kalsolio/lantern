@@ -142,8 +142,8 @@ func (s *ChainedServerInfo) check(dial func(string, string) (net.Conn, error), d
 		Dial:              dial,
 	}
 	var url string
-	checkTarget, isSet := s.checkTarget.Load().(string)
-	if !isSet {
+	checkTarget, targetSet := s.checkTarget.Load().(string)
+	if !targetSet {
 		url = "http://ping-chained-server"
 	} else {
 		url = fmt.Sprintf("http://%s/index.html", checkTarget)
@@ -153,7 +153,7 @@ func (s *ChainedServerInfo) check(dial func(string, string) (net.Conn, error), d
 		log.Errorf("Could not create HTTP request: %v", err)
 		return false
 	}
-	if !isSet {
+	if !targetSet {
 		req.Header.Set("X-Lantern-Ping", "small")
 	}
 
